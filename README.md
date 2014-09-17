@@ -23,6 +23,7 @@ My program should first count the size of the message and key (if there is one),
 ### Pseudocode
 
 #### Main Loop
+
 The main loop tackles the job of counting the size of the message and the key, then sends the message off the appropriate subroutine. If the key length is 0, it goes to `guessthekey` to try and guess the key. If an actual key is given, or once a key is determined from `guessthekey`, the loop proceeds to `decryptMessage`. Once returning from `decryptMessage` we trap the CPU and the program ends.
 
 ```
@@ -51,6 +52,31 @@ while n==0:
 ```
 
 #### Subroutine 1: `decryptMessage`
+
+This subroutine takes message pointer, the key pointer, the message length, and the key length. It lines up one byte of the key with one byte of the message and calls `decryptCharacter` to do the actual decrypting. When it receives the decrypted character back, it stores it into memory and starts the process over again until the entire message is decoded.
+
+```
+n=1;
+m=1;
+origval=keypointer;
+while n<msglength:
+      msgbyte=*msgpointer;
+      if m==keylength:
+            keybyte=*keypointer;
+            keypointer=origval;
+            m=0;
+      else
+            keybyte=*keypointer;
+            end if
+      call  decryptCharacter
+      store msgbyte, decryptedmsglocation
+      decryptedmsglocation+=1;
+      n+=1;
+      m+=1;
+      msgpointer+=1;
+      end while
+return
+```
 
 #### Subroutine 2: `decryptCharacter`
 
