@@ -179,7 +179,7 @@ guess2		.string		"."
 In ROM, we save space for the newly decrypted message (`decrypted`) and the new key (`newkey`) if it is necessary.
 ```
 		.data
-decrypted	.space		90
+decrypted	.space		100
 newkey		.space		2
 ```
 We must also initialize the stackpointer and stop the watchdog timer in order for the program to run correctly.
