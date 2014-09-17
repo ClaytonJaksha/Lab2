@@ -170,20 +170,22 @@ Next, we store the key (if there is one) into RAM. Like the message, we put a st
 key		.byte		0xff,0xaa,0xff,0x11,0xff	;putting stop code in key means that the key is unknown
 stop2	      	.byte		0xff,0xaa,0xff,0x11,0xff
 ```
-
+If no key is given, our program counts up frequently seen bits and compares them against a pair of user-provided guesses to provide a possible key. The guesses should be educated after looking carefully at the message and where the most frequent bytes appear in the string. These guesses are stored in RAM.
 ```
-;these guesses are compared against the most frequent even or odd characters in order to determin the key.
+;these guesses are compared against the most frequent even or odd characters in order to determine the key.
 guess1      	.string		"e"
 guess2		.string		"."
-
-;saves space for the newly decrypted message and the new key, if necessary.
+```
+In ROM, we save space for the newly decrypted message (`decrypted`) and the new key (`newkey`) if it is necessary.
+```
 		.data
 decrypted	.space		90
 newkey		.space		2
-;-------------------------------------------------------------------------------
+```
+We must also initialize the stackpointer and stop the watchdog timer in order for the program to run correctly.
+```
 RESET         	mov.w   	#__STACK_END,SP         ; Initialize stackpointer
 StopWDT       	mov.w   	#WDTPW|WDTHOLD,&WDTCTL  ; Stop watchdog timer
-
 ```
 
 #### Main Loop
