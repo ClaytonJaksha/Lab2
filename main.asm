@@ -31,7 +31,7 @@ guess2			.string		"."
 
 ;saves space for the newly decrypted message and the new key, if necessary.
 			.data
-decrypted		.space		90
+decrypted		.space		100
 newkey			.space		2
 ;-------------------------------------------------------------------------------
 RESET       		mov.w   	#__STACK_END,SP         ; Initialize stackpointer
