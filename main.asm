@@ -8,15 +8,15 @@
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------
 
-            .cdecls C,LIST,"msp430.h"       ; Include device header file
+            		.cdecls C,LIST,"msp430.h"       ; Include device header file
 
 ;-------------------------------------------------------------------------------
-        	.text                           ; Assemble into program memory
-        	.retain                         ; Override ELF conditional linking
-                                            ; and retain current section
-            	.retainrefs                     ; Additionally retain any sections
-                                            ; that have references to current
-                                           	; section
+        		.text                           ; Assemble into program memory
+        		.retain                         ; Override ELF conditional linking
+                		                        ; and retain current section
+            		.retainrefs                     ; Additionally retain any sections
+                        		                ; that have references to current
+                                        	   	; section
 
 ;stores the encrypted message and the key in RAM. Also, stop codes are appended after the message and key so their lengths can be counted.
 ;if the key is unknown, then the stop code for the key is inputted as the key.
@@ -52,55 +52,54 @@ StopWDT     		mov.w   	#WDTPW|WDTHOLD,&WDTCTL  ; Stop watchdog timer
 			mov.w	#message, r4
 			mov.w	#key, r5
 			mov.w	#decrypted, r8
-			clr		r6
-			clr		r7
-			dec		r4
-			dec		r5
+			clr	r6
+			clr	r7
+			dec	r4
+			dec	r5
 
 ;this piece of code counts the length of the message in bytes. It stops counting when it reaches the stop1 sequence.
-countmsg	inc		r4
-			inc		r6
+countmsg		inc	r4
+			inc	r6
 			cmp.b	#0xff, 0(r4)
-			jeq		countf1
-			jmp		countmsg
-countf1		cmp.b	#0x11, 1(r4)
-			jne		countmsg
+			jeq	countf1
+			jmp	countmsg
+countf1			cmp.b	#0x11, 1(r4)
+			jne	countmsg
 			cmp.b	#0xff, 2(r4)
-			jne		countmsg
+			jne	countmsg
 			cmp.b	#0xaa, 3(r4)
-			jne		countmsg
+			jne	countmsg
 			cmp.b	#0xff, 4(r4)
-			jne		countmsg
-			dec		r6
+			jne	countmsg
+			dec	r6
 
 ;this piece of code counts the length of the key in bytes. It stops counting when it reaches the stop2 sequence.
-countkey	inc		r5
-			inc		r7
+countkey		inc	r5
+			inc	r7
 			cmp.b	#0xff, 0(r5)
-			jeq		countf2
-			jmp		countkey
-countf2		cmp.b	#0xaa, 1(r5)
-			jne		countkey
+			jeq	countf2
+			jmp	countkey
+countf2			cmp.b	#0xaa, 1(r5)
+			jne	countkey
 			cmp.b	#0xff, 2(r5)
-			jne		countkey
+			jne	countkey
 			cmp.b	#0x11, 3(r5)
-			jne		countkey
+			jne	countkey
 			cmp.b	#0xff, 4(r5)
-			jne		countkey
-			dec		r7
+			jne	countkey
+			dec	r7
 
 ;this checks if the length of the key is 0; if it is then is calls the subroutine guessthekey which figures out the key.
 ;otherwise, it goes and decrypts the message byte by byte.
 			mov.w	#message, r4
 			mov.w	#key, r5
-			cmp		#0, r7
-			jne		getthemsg
+			cmp	#0, r7
+			jne	getthemsg
 			call	#guessthekey
 			mov.w	#newkey, r5
 			mov.w	#2, r7
-getthemsg	call   	#decryptMessage
-;traps the CPU
-forever:    jmp     forever
+getthemsg		call   	#decryptMessage
+forever:    		jmp     forever			;traps the CPU
 
 ;-------------------------------------------------------------------------------
                                             ; Subroutines
