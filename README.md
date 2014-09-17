@@ -158,12 +158,20 @@ return
 
 #### Initialization
 
+We first store the encrypted message in RAM. We follow the message immediately by a unique stop code (`stop1`) that enables the program to count the message and determine its length in bytes.
+
 ```
                 .text
 message		.byte		0x35,0xdf,0x00,0xca,0x5d,0x9e,0x3d,0xdb,0x12,0xca,0x5d,0x9e,0x32,0xc8,0x16,0xcc,0x12,0xd9,0x16,0x90,0x53,0xf8,0x01,0xd7,0x16,0xd0,0x17,0xd2,0x0a,0x90,0x53,0xf9,0x1c,0xd1,0x17,0x90,0x53,0xf9,0x1c,0xd1,0x17,0x90
 stop1	      	.byte		0xff,0x11,0xff,0xaa,0xff
+```
+Next, we store the key (if there is one) into RAM. Like the message, we put a stop code (`stop2`) that is unique from `stop1` in order to count the length of the key. If there is no key, we simply input `stop2` as the key. The program will count and read a key length of 0 bytes.
+```
 key		.byte		0xff,0xaa,0xff,0x11,0xff	;putting stop code in key means that the key is unknown
 stop2	      	.byte		0xff,0xaa,0xff,0x11,0xff
+```
+
+```
 ;these guesses are compared against the most frequent even or odd characters in order to determin the key.
 guess1      	.string		"e"
 guess2		.string		"."
