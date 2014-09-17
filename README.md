@@ -449,6 +449,6 @@ The objective of this lab was to design code that would take a message, a key (o
 
 ## Documentation
 
-I referenced the follwoing (ASCII table)[http://benborowiec.com/wp-content/uploads/2011/07/better_ascii_table.jpg] in the planning and development of this code.
+I referenced the follwoing [ASCII table](http://benborowiec.com/wp-content/uploads/2011/07/better_ascii_table.jpg) in the planning and development of this code.
 
 ![alt text](http://benborowiec.com/wp-content/uploads/2011/07/better_ascii_table.jpg "ASCII table")
