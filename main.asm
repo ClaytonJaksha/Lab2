@@ -130,48 +130,48 @@ forever:    		jmp     forever			;traps the CPU
 
 decryptMessage:
 			mov.w	#0, r9
-			mov.w	#0,	r10
+			mov.w	#0, r10
 			mov.w	r5, r12
-			dec		r4
-			dec		r5
-			inc		r6
-			inc		r7
+			dec	r4
+			dec	r5
+			inc	r6
+			inc	r7
 
 ;this loop goes through each byte of the message, sends it off to the decryptCharacter subroutine.
 ;when it gets the decrypted byte back from decryptCharacter subroutine
-startdecrxn	inc		r4
-			inc		r5
-			inc		r9
-			inc		r10
-            cmp		r6, r9
-            jge		done
-            mov.b	@r4, r11
-            cmp		r7, r10
-      		jne		noshift
+startdecrxn		inc	r4
+			inc	r5
+			inc	r9
+			inc	r10
+        		cmp	r6, r9
+        		jge	done
+        		mov.b	@r4, r11
+			cmp	r7, r10
+      			jne	noshift
 			mov.w	r12, r5
 			mov.b	@r5, r13
 			mov.w	#1, r10
-			jmp		dcrxtchar
-noshift		mov.b	@r5, r13
-			jmp		dcrxtchar
+			jmp	dcrxtchar
+noshift			mov.b	@r5, r13
+			jmp	dcrxtchar
 
 ;after fetching the decrypted byte, it stores it into the appropriate memory location
-done2		mov.b	r11, 0(r8)
-			inc		r8
-			jmp		startdecrxn
+done2			mov.b	r11, 0(r8)
+			inc	r8
+			jmp	startdecrxn
 ;once the whole message is decoded and stored, the length registers (r6,r7) are restored and teh rest are cleared so they can be used in other subroutines.
-done		dec 	r6
-			dec		r7
-			clr		r9
-			clr		r10
-			clr		r11
-			clr		r12
+done			dec 	r6
+			dec	r7
+			clr	r9
+			clr	r10
+			clr	r11
+			clr	r12
 			clr 	r13
 			ret
 
 ;I need this small segment here to call the next subroutine because it can be called from different locations but must return to the same location
-dcrxtchar	call	#decryptCharacter
-			jmp		done2
+dcrxtchar		call	#decryptCharacter
+			jmp	done2
 ;-------------------------------------------------------------------------------
 ;Subroutine Name: decryptCharacter
 ;Author:	CDT Clayton Jaksha, USMA
@@ -185,7 +185,7 @@ dcrxtchar	call	#decryptCharacter
 
 decryptCharacter:
 			xor.w	r13, r11
-            ret
+        		ret
 
 ;-------------------------------------------------------------------------------
 ;Subroutine Name: guessthekey
@@ -206,76 +206,76 @@ decryptCharacter:
 guessthekey:
 			push 	r4
 			mov.w	#newkey, r13
-			clr		r9
-			clr		r12
-checkval	mov.w	0(r4), r11
+			clr	r9
+			clr	r12
+checkval		mov.w	0(r4), r11
 			mov.w	r4, r10
-			clr		r12
-checkfreq	incd	r12
-			cmp		r6, r12
-			jge		nextup
+			clr	r12
+checkfreq		incd	r12
+			cmp	r6, r12
+			jge	nextup
 			cmp.b 	@r10, r11
-			jeq		wegotone
+			jeq	wegotone
 			incd	r10
-			jmp		checkfreq
-wegotone	incd	r10
-			inc		r9
-			cmp		#3, r9
-			jeq		bingo
-			jmp		checkfreq
-nextup		incd	r4
-			clr		r9
-			cmp		#stop1, r4
-			jge		bingo
-			jmp		checkval
-bingo		mov.b	@r4, 0(r13)
+			jmp	checkfreq
+wegotone		incd	r10
+			inc	r9
+			cmp	#3, r9
+			jeq	bingo
+			jmp	checkfreq
+nextup			incd	r4
+			clr	r9
+			cmp	#stop1, r4
+			jge	bingo
+			jmp	checkval
+bingo			mov.b	@r4, 0(r13)
 			mov.w	#guess1, r14
 			xor.b	0(r14), 0(r13)
-			clr		r14
-			pop		r4
+			clr	r14
+			pop	r4
 
 ;This portion counts the odd-addressed bytes and looks for a value that appears 3 times (arbitrarily chosen value).
 ;If it appears three times, we will assume it to be a common character and we xor it with the guess for that character is (guess2) and store that as the second byte of the new key.
 			push 	r4
 			mov.w	#newkey, r13
-			clr		r9
-			clr		r12
-checkval1	mov.b	1(r4), r11
+			clr	r9
+			clr	r12
+checkval1		mov.b	1(r4), r11
 			mov.w	r4, r10
-			clr		r12
-checkfreq1	incd	r12
-			cmp		r6, r12
-			jge		nextup1
+			clr	r12
+checkfreq1		incd	r12
+			cmp	r6, r12
+			jge	nextup1
 			cmp.b 	1(r10), r11
-			jeq		wegotone1
+			jeq	wegotone1
 			incd	r10
-			jmp		checkfreq1
-wegotone1	incd	r10
-			inc		r9
-			cmp		#3, r9
-			jeq		bingo1
-			jmp		checkfreq1
-nextup1		incd	r4
-			clr		r9
-			cmp		#stop1, r4
-			jge		bingo1
-			jmp		checkval1
-bingo1		mov.b	1(r4), 1(r13)
+			jmp	checkfreq1
+wegotone1		incd	r10
+			inc	r9
+			cmp	#3, r9
+			jeq	bingo1
+			jmp	checkfreq1
+nextup1			incd	r4
+			clr	r9
+			cmp	#stop1, r4
+			jge	bingo1
+			jmp	checkval1
+bingo1			mov.b	1(r4), 1(r13)
 			mov.w	#guess2, r14
 			xor.b	0(r14), 1(r13)
-			clr		r14
-			pop		r4
+			clr	r14
+			pop	r4
 			ret
 
 
 ;-------------------------------------------------------------------------------
 ;           Stack Pointer definition
 ;-------------------------------------------------------------------------------
-            .global __STACK_END
-            .sect 	.stack
+        		.global __STACK_END
+        		.sect 	.stack
 
 ;-------------------------------------------------------------------------------
 ;           Interrupt Vectors
 ;-------------------------------------------------------------------------------
-            .sect   ".reset"                ; MSP430 RESET Vector
-            .short  RESET
+            		.sect   ".reset"                ; MSP430 RESET Vector
+            		.short  RESET
