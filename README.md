@@ -174,12 +174,12 @@ stop1	      	.byte		0xff,0x11,0xff,0xaa,0xff
 Next, we store the key (if there is one) into RAM. Like the message, we put a stop code (`stop2`) that is unique from `stop1` in order to count the length of the key. If there is no key, we simply input `stop2` as the key. The program will count and read a key length of 0 bytes.
 ```
 key			.byte		0xff,0xaa,0xff,0x11,0xff	;putting stop code in key means that the key is unknown
-stop2	      	.byte		0xff,0xaa,0xff,0x11,0xff
+stop2	    .byte	0xff,0xaa,0xff,0x11,0xff
 ```
 If no key is given, our program counts up frequently seen bits and compares them against a pair of user-provided guesses to provide a possible key. The guesses should be educated after looking carefully at the message and where the most frequent bytes appear in the string. These guesses are stored in RAM.
 ```
 ;these guesses are compared against the most frequent even or odd characters in order to determine the key.
-guess1      	.string		"e"
+guess1      .string	"e"
 guess2		.string		"."
 ```
 In ROM, we save space for the newly decrypted message (`decrypted`) and the new key (`newkey`) if it is necessary.
