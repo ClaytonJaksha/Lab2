@@ -11,31 +11,31 @@
             .cdecls C,LIST,"msp430.h"       ; Include device header file
 
 ;-------------------------------------------------------------------------------
-            .text                           ; Assemble into program memory
-            .retain                         ; Override ELF conditional linking
+        	.text                           ; Assemble into program memory
+        	.retain                         ; Override ELF conditional linking
                                             ; and retain current section
-            .retainrefs                     ; Additionally retain any sections
+            	.retainrefs                     ; Additionally retain any sections
                                             ; that have references to current
                                            	; section
 
 ;stores the encrypted message and the key in RAM. Also, stop codes are appended after the message and key so their lengths can be counted.
 ;if the key is unknown, then the stop code for the key is inputted as the key.
-            .text
-message		.byte		0x35,0xdf,0x00,0xca,0x5d,0x9e,0x3d,0xdb,0x12,0xca,0x5d,0x9e,0x32,0xc8,0x16,0xcc,0x12,0xd9,0x16,0x90,0x53,0xf8,0x01,0xd7,0x16,0xd0,0x17,0xd2,0x0a,0x90,0x53,0xf9,0x1c,0xd1,0x17,0x90,0x53,0xf9,0x1c,0xd1,0x17,0x90
-stop1		.byte		0xff,0x11,0xff,0xaa,0xff
+        		.text
+message			.byte		0x35,0xdf,0x00,0xca,0x5d,0x9e,0x3d,0xdb,0x12,0xca,0x5d,0x9e,0x32,0xc8,0x16,0xcc,0x12,0xd9,0x16,0x90,0x53,0xf8,0x01,0xd7,0x16,0xd0,0x17,0xd2,0x0a,0x90,0x53,0xf9,0x1c,0xd1,0x17,0x90,0x53,0xf9,0x1c,0xd1,0x17,0x90
+stop1			.byte		0xff,0x11,0xff,0xaa,0xff
 key			.byte		0xff,0xaa,0xff,0x11,0xff	;putting stop code in key means that the key is unknown
-stop2		.byte		0xff,0xaa,0xff,0x11,0xff
+stop2			.byte		0xff,0xaa,0xff,0x11,0xff
 ;these guesses are compared against the most frequent even or odd characters in order to determin the key.
-guess1		.string		"e"
-guess2		.string		"."
+guess1			.string		"e"
+guess2			.string		"."
 
 ;saves space for the newly decrypted message and the new key, if necessary.
 			.data
-decrypted	.space		90
-newkey		.space		2
+decrypted		.space		90
+newkey			.space		2
 ;-------------------------------------------------------------------------------
-RESET       mov.w   	#__STACK_END,SP         ; Initialize stackpointer
-StopWDT     mov.w   	#WDTPW|WDTHOLD,&WDTCTL  ; Stop watchdog timer
+RESET       		mov.w   	#__STACK_END,SP         ; Initialize stackpointer
+StopWDT     		mov.w   	#WDTPW|WDTHOLD,&WDTCTL  ; Stop watchdog timer
 
 ;-------------------------------------------------------------------------------
                                             ; Main loop here
@@ -48,7 +48,7 @@ StopWDT     mov.w   	#WDTPW|WDTHOLD,&WDTCTL  ; Stop watchdog timer
 			;r6 holds message length (bytes)
 			;r7 holds key lengths (bytes)
 			;r8 holds decrypted pointer
-            ;
+            
 			mov.w	#message, r4
 			mov.w	#key, r5
 			mov.w	#decrypted, r8
