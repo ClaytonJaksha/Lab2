@@ -15,10 +15,16 @@ This program is designed to take an xor-encrypted message, a key (or none), and 
 
 My program should first count the size of the message and key (if there is one), then run through and cycle the key through the message and xor-ing it each time, then store the decrypted message into ROM.
 
-## Flowchart/Pseudocode
-### Flowchart
+## Flowcharts/Pseudocode
+### Flowcharts
 
-![alt text](http://i.imgur.com/yfCbwaz.png "Flowchart")
+![alt text](http://i.imgur.com/3MKkBRa.png "Main Loop")
+
+![alt text](http://i.imgur.com/c0u6e1r.png "decryptMessage")
+
+![alt text](http://i.imgur.com/T6CuKVF.png "decryptCharacter")
+
+![alt text](http://i.imgur.com/jhACrxt.png "guessthekey")
 
 ### Pseudocode
 
