@@ -433,6 +433,9 @@ I feel this answer is correct as it is sensible and composed of only letters, sp
 ## Observations and Conclusion
 #### Observations
 
+* Subroutine calls require the immediate addressing of the label they are trying to call, otherwise everything will get messed up.
+* The xor encryption is a very simple encryption; decrypting more challenging message without knowledge of its encryption process or its key would be far more challenging.
+* The testing for this code could have taken <i>far<\i> more long than it actually did. There were (1+1+26+26)^2 possible different guesses. Having some sense of where bytes frequently appear is helpful in reducing the amount of tries it takes to correctly guess it.
 
 #### Conclusion
 
