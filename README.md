@@ -404,7 +404,7 @@ This time: success! The third time's the charm. I knew I had guessed the right v
 
 ## Testing Methodology/Results
 
-[Three test cases](ece382.com/labs/lab2/index.html) are provided on the [ECE 382 Website](ece382.com). The tests and results are found below.
+[Three test cases](http://ece382.com/labs/lab2/index.html) are provided on the [ECE 382 Website](http://ece382.com). The tests and results are found below.
 
 #### C Functionality
 
