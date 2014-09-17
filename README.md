@@ -190,6 +190,75 @@ StopWDT       	mov.w   	#WDTPW|WDTHOLD,&WDTCTL  ; Stop watchdog timer
 
 #### Main Loop
 
+First, we load the registers with the necessary information. r4 will hold the message pointer, r5 holds the key pointer, r6 holds the message length in bytes, r7 holds the key length in bytes, and r8 holds the decrypted message pointer.
+```
+			;load registers with necessary info for decryptMessage here
+			;
+			;r4 points to message location
+			;r5 points to key location
+			;r6 holds message length (bytes)
+			;r7 holds key lengths (bytes)
+			;r8 holds decrypted pointer
+            
+			mov.w	#message, r4
+			mov.w	#key, r5
+			mov.w	#decrypted, r8
+```
+We then prepare to enter our first loop. This loop counts the length of message in bytes by going through each byte and looking for the `stop1` sequence. Once it sees it, it knows to stop counting and we have a value for the length of the message.
+```
+			clr		r6
+			clr		r7
+			dec		r4
+			dec		r5
+countmsg	inc		r4
+			inc		r6
+			cmp.b	#0xff, 0(r4)
+			jeq		countf1
+			jmp		countmsg
+countf1		cmp.b	#0x11, 1(r4)
+			jne		countmsg
+			cmp.b	#0xff, 2(r4)
+			jne		countmsg
+			cmp.b	#0xaa, 3(r4)
+			jne		countmsg
+			cmp.b	#0xff, 4(r4)
+			jne		countmsg
+			dec		r6
+```
+Similarly, the key length counter looks for the value of `stop2` and will continue counting until it reaches it.
+```
+countkey	inc		r5
+			inc		r7
+			cmp.b	#0xff, 0(r5)
+			jeq		countf2
+			jmp		countkey
+countf2		cmp.b	#0xaa, 1(r5)
+			jne		countkey
+			cmp.b	#0xff, 2(r5)
+			jne		countkey
+			cmp.b	#0x11, 3(r5)
+			jne		countkey
+			cmp.b	#0xff, 4(r5)
+			jne		countkey
+			dec		r7
+```
+If the key length is 0 bytes, then we know we have not been given a key and must determine it on our own. Therefore, we check the key length is 0, if it is we call `guessthekey` to try and guess what the key is before we continue. If/once it is known, we call `decryptMessage` and go about decrpyting the message and saving into memory. Once we're done decrypting, we trap the CPU.
+```
+;this checks if the length of the key is 0; if it is then is calls the subroutine guessthekey which figures out the key.
+;otherwise, it goes and decrypts the message byte by byte.
+			mov.w	#message, r4
+			mov.w	#key, r5
+			cmp		#0, r7
+			jne		getthemsg
+			call	#guessthekey
+			mov.w	#newkey, r5
+			mov.w	#2, r7
+getthemsg	call   	#decryptMessage
+
+forever:    jmp     forever	;traps the CPU
+
+```
+
 #### Subroutine 1: `decryptMessage`
 
 #### Subroutine 2: `decryptCharacter`
