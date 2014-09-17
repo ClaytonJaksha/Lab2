@@ -260,8 +260,69 @@ forever:    jmp     forever	;traps the CPU
 ```
 
 #### Subroutine 1: `decryptMessage`
+This subroutine takes message pointer, the key pointer, the message length, and the key length. It lines up one byte of the key with one byte of the message and calls `decryptCharacter` to do the actual decrypting. When it receives the decrypted character back, it stores it into memory and starts the process over again until the entire message is decoded.
+
+Throughout this subroutine, r4-r8 hold true to their previous values, r9 counts through the program and serves as a comparison with the length of the message, r10 also counts through the program and compares with the length of the key, r11 is the message byte that gets xor'd with the key byte to get stored in memory, r12 holds a copy of the initial value of the key pointer so that it can be restored when it needs to be cycled through again, and r13 holds the value of the key byte that the program will xor with the message byte. The first segment of the subroutine just initializes for the rest of the loop.
+```
+decryptMessage:
+			mov.w	#0, r9
+			mov.w	#0,	r10
+			mov.w	r5, r12
+			dec		r4
+			dec		r5
+			inc		r6
+			inc		r7
+```
+This loop goes through each byte of the message, cycles through the key bytes, and sends a message byte and key byte off to the decryptCharacter subroutine. When it gets the decrypted byte back from decryptCharacter subroutine. The `dcrxtchar` jump must be used because we need to call `decryptCharacter from different conditions yet return to the same place.
+```
+startdecrxn	inc		r4
+			inc		r5
+			inc		r9
+			inc		r10
+            cmp		r6, r9
+            jge		done
+            mov.b	@r4, r11
+            cmp		r7, r10
+      		jne		noshift
+			mov.w	r12, r5
+			mov.b	@r5, r13
+			mov.w	#1, r10
+			jmp		dcrxtchar
+noshift		mov.b	@r5, r13
+			jmp		dcrxtchar
+```
+Once we get our decrypted byte back from the `decryptCharacter` subroutine, we store it into the appropriate memory location.
+```
+done2		mov.b	r11, 0(r8)
+			inc		r8
+			jmp		startdecrxn
+```
+After decrypting the whole message, the length registers (r6,r7) are restored and the rest of the registers are cleared so they can be used elsewhere and are not destroyed.
+```
+done		dec 	r6
+			dec		r7
+			clr		r9
+			clr		r10
+			clr		r11
+			clr		r12
+			clr 	r13
+			ret
+```
+I need this small segment here to call `decryptCharacter` because it can be called from different locations but must return to the same location.
+```
+dcrxtchar	call	#decryptCharacter
+			jmp		done2
+```
 
 #### Subroutine 2: `decryptCharacter`
+
+`decryptCharacter` takes the message byte, the key byte, xor's them together and sends back the decrypted message byte in r13.
+
+```
+decryptCharacter:
+			xor.w	r13, r11
+            ret
+```
 
 #### Subroutine 3: `guessthekey`
 
