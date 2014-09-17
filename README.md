@@ -386,16 +386,35 @@ bingo1		mov.b	1(r4), 1(r13)
 
 ## Debugging
 
+Debugging was done through iterative and line-by-line testing. Looking at each register and memory location after executing an instruction, I hunted down mistakes and corrected them. There were no major code overhauls. No issues requiring debugging exist in the current version of the code.
+
+Only the A functionality test required some serious debugging since it depends on educated guesswork. I noticed the byte `0x90` appeared quite a bit and it was also the last byte of the message, so I guessed it was a period. I inputted a `"."` into `guess2` and started out with a `" "` in `guess1` since I figured the other most likely byte should be a space (even though they could both be periods). I received the following result:
+
+![alt text](http://i.imgur.com/JnVPzRh.png "Guess 1")
+
+Looking at the result, we notice about half the message makes sense. Everything keyed off `guess2` is a reasonable character. Therefore, I assumed `guess2` was correct and progressed onto determining the correct value of `guess1`. I moved onto vowels, starting with `"a"`. I received the following result:
+
+![alt text](http://i.imgur.com/lxELMPH.png "Guess 2")
+
+Also incorrect. I moved through the vowels, changing `guess1` to `"e"`. I recieved this:
+
+![alt text](http://i.imgur.com/KsmQd8K.png "Guess 3")
+
+This time: success! The third time's the charm. I knew I had guessed the right values for frequent characters and no more debugging was necessary.
 
 ## Testing Methodology/Results
 
 #### C Functionality
 
+![alt text](http://i.imgur.com/yKEjyJe.png "C Functionality")
 
 #### B Functionality
 
+![alt text](http://i.imgur.com/guQh3yV.png "B Functionality")
+
 #### A Functionality
 
+![alt text](http://i.imgur.com/KsmQd8K.png "A Functionality")
 
 ## Observations and Conclusion
 #### Observations
