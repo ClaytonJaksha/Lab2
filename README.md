@@ -192,14 +192,6 @@ StopWDT       	mov.w   	#WDTPW|WDTHOLD,&WDTCTL  ; Stop watchdog timer
 
 First, we load the registers with the necessary information. r4 will hold the message pointer, r5 holds the key pointer, r6 holds the message length in bytes, r7 holds the key length in bytes, and r8 holds the decrypted message pointer.
 ```
-			;load registers with necessary info for decryptMessage here
-			;
-			;r4 points to message location
-			;r5 points to key location
-			;r6 holds message length (bytes)
-			;r7 holds key lengths (bytes)
-			;r8 holds decrypted pointer
-            
 			mov.w	#message, r4
 			mov.w	#key, r5
 			mov.w	#decrypted, r8
@@ -244,8 +236,6 @@ countf2		cmp.b	#0xaa, 1(r5)
 ```
 If the key length is 0 bytes, then we know we have not been given a key and must determine it on our own. Therefore, we check the key length is 0, if it is we call `guessthekey` to try and guess what the key is before we continue. If/once it is known, we call `decryptMessage` and go about decrpyting the message and saving into memory. Once we're done decrypting, we trap the CPU.
 ```
-;this checks if the length of the key is 0; if it is then is calls the subroutine guessthekey which figures out the key.
-;otherwise, it goes and decrypts the message byte by byte.
 			mov.w	#message, r4
 			mov.w	#key, r5
 			cmp		#0, r7
@@ -325,6 +315,74 @@ decryptCharacter:
 ```
 
 #### Subroutine 3: `guessthekey`
+We learn from the decryption of the B functionality message that the key to the A functionality message is 16 bits long. Meaning that every odd bit and every even bit is keyed the same. In order to ascertain the key, we look at what even bytes appear frequently, guess what the decrypted value of that byte is, and then make half of the key based off of that. We create the other half of the key by doing the same to the odd bytes.
+
+Therefore, this sequence is broken into two parts: even and odd bytes. This portion counts the even-addressed bytes and looks for a value that appears 3 times (arbitrarily chosen value). I felt if it appeared 3 times it was a significant character, probably a vowel, a space, or a period. Then, we xor it with the guess for that character is (`guess1`) and store that as the first byte of the new key.
+```
+guessthekey:
+			push 	r4
+			mov.w	#newkey, r13
+			clr		r9
+			clr		r12
+checkval	mov.w	0(r4), r11
+			mov.w	r4, r10
+			clr		r12
+checkfreq	incd	r12
+			cmp		r6, r12
+			jge		nextup
+			cmp.b 	@r10, r11
+			jeq		wegotone
+			incd	r10
+			jmp		checkfreq
+wegotone	incd	r10
+			inc		r9
+			cmp		#3, r9
+			jeq		bingo
+			jmp		checkfreq
+nextup		incd	r4
+			clr		r9
+			cmp		#stop1, r4
+			jge		bingo
+			jmp		checkval
+bingo		mov.b	@r4, 0(r13)
+			mov.w	#guess1, r14
+			xor.b	0(r14), 0(r13)
+			clr		r14
+			pop		r4
+```
+This portion counts the odd-addressed bytes and looks for a value that appears 3 times. It is essentially the same process as the even counter. Then, we xor it with the guess for that character is (`guess2`) and store that as the second byte of the new key.
+```
+			push 	r4
+			mov.w	#newkey, r13
+			clr		r9
+			clr		r12
+checkval1	mov.b	1(r4), r11
+			mov.w	r4, r10
+			clr		r12
+checkfreq1	incd	r12
+			cmp		r6, r12
+			jge		nextup1
+			cmp.b 	1(r10), r11
+			jeq		wegotone1
+			incd	r10
+			jmp		checkfreq1
+wegotone1	incd	r10
+			inc		r9
+			cmp		#3, r9
+			jeq		bingo1
+			jmp		checkfreq1
+nextup1		incd	r4
+			clr		r9
+			cmp		#stop1, r4
+			jge		bingo1
+			jmp		checkval1
+bingo1		mov.b	1(r4), 1(r13)
+			mov.w	#guess2, r14
+			xor.b	0(r14), 1(r13)
+			clr		r14
+			pop		r4
+			ret
+```
 
 ## Debugging
 
