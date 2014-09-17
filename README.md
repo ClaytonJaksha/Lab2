@@ -9,7 +9,7 @@ The objective of this lab is to gain a foundational understanding of cryptograph
 
 ### Purpose
 
-This program is designed to take an xor-encrypted message, a key (or none), and return a decrypted message in ROM. Through programming, it will make use of subroutines to perform a specific task(s). For the A-solution, it will not take a key and still decrypte the message, although it still requires some critical thought on the part of the user.
+This program is designed to take an xor-encrypted message, a key (or none), and return a decrypted message in ROM. Through programming, it will make use of subroutines to perform a specific task(s). For the A-solution, it will not take a key and still decrypt the message, although it still requires some critical thought on the part of the user.
 
 ## Preliminary Design
 
@@ -80,7 +80,79 @@ return
 
 #### Subroutine 2: `decryptCharacter`
 
+This subroutine is extremely simple; it takes in the key byte and message byte, xor's them together, and gives back the decrypted message byte.
+
+```
+msgbyte=(msgbyte)XOR(keybyte);
+return
+```
+
 #### Subroutine 3: `guessthekey`
+
+This subroutine checks the different bytes of the message and looks for ones that are repeated more than others (3 repetitions is the trigger for a 'frequent byte') and then compares that with a guess of what the character is. It creates a key based off of the guess. If the key is 16 bits, then we must check even values for repetition and odd values for repetition separately and have separate guesses for each.
+
+```
+n=0;
+m=0;
+c=0;
+guess1="e";
+guess2=" ";
+msgptrorgval=msgpointer;
+while n<=msglength:
+      bytewewant=*msgpointer;
+      msgpointerval=msgpointer
+      while m<=msglength:
+            if (bytewewant-*msgpointer)==0:
+                  c+=1;
+                  if c==3:
+                        m=msglength+1;
+                        n=msglength+1;
+                        keyval=(guess1)XOR(*msgpointerval);
+                        store keyval, dcrxnmsgptr;
+                        end if
+                  msgpointer+=2;
+                  m+=2;
+            else
+                  msgpointer+=2;
+                  m+=2;
+                  end if
+      msgpointer=msgpointerval;
+      m=0;
+      n+=2;
+      msgpointer+=2;
+      end while
+```
+So that first part would check the even bytes for repetition. The next section would do essentially the same thing, but with the odd bytes.
+```
+n=0;
+m=0;
+c=0;
+msgpointer=msgptrorgval+1;
+while n<=msglength:
+      bytewewant=*msgpointer;
+      msgpointerval=msgpointer
+      while m<=msglength:
+            if (bytewewant-*msgpointer)==0:
+                  c+=1;
+                  if c==3:
+                        m=msglength+1;
+                        n=msglength+1;
+                        keyval=(guess2)XOR(*msgpointerval+1);
+                        store keyval, dcrxnmsgptr;
+                        end if
+                  msgpointer+=2;
+                  m+=2;
+            else
+                  msgpointer+=2;
+                  m+=2;
+                  end if
+      msgpointer=msgpointerval;
+      m=0;
+      n+=2;
+      msgpointer+=2;
+      end while
+return
+```
 
 ## Code Walkthrough
 
