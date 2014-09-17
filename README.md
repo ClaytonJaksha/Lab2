@@ -448,4 +448,7 @@ I feel this answer is correct as it is sensible and composed of only letters, sp
 The objective of this lab was to design code that would take a message, a key (or none), and return a decrypted message in memory. I was able to meet these requirements to their fullest required extent.
 
 ## Documentation
-##### None
+
+I referenced the follwoing (ASCII table)[http://benborowiec.com/wp-content/uploads/2011/07/better_ascii_table.jpg] in the planning and development of this code.
+
+![alt text](http://benborowiec.com/wp-content/uploads/2011/07/better_ascii_table.jpg "ASCII table")
