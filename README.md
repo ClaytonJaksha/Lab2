@@ -5,6 +5,7 @@ Lab 2: Decryption
 ## Objective and Purpose
 ### Objective
 
+The objective of this lab is to gain a foundational understanding of cryptography, the usefulness of xor for encryption, and the use of subroutines in complex programming.
 
 ### Purpose
 
